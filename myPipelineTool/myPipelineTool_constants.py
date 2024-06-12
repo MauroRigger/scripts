@@ -1,14 +1,19 @@
 import pymel.core as pm
 import maya.cmds as cmds
 
+
 class myPipeline_const():
     """
-    Create constants function for myPipeline Tools
+    Create constants function for myPipeline Tools.
+    :param: Function for myPipelineTools
+    """
+
+    """
+    Update reference loading latest rig and connecting to multiples animations selected.
+    :param: load latest rig to update animations selected.
+    :param: save files updated in path selected.
     """
     def update_reference_in_files(self, latest_rig, animation_files, folder_path, save_in):
-        """
-        Update the reference file in multiple animation files and save them.
-        """
         for animation_file in animation_files:
             cmds.file(prompt=False)
             print(f"Processing file: {animation_file.text()}")
@@ -31,3 +36,4 @@ class myPipeline_const():
             cmds.file(rename=save_in + '/' + animation_file.text())
             cmds.file(save=True, defaultExtensions=False, type='mayaAscii')
             print(f"File saved: {save_in + '/' + animation_file.text()}")
+
