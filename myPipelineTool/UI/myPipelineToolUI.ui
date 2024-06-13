@@ -656,6 +656,9 @@
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBox_range_by_default">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -688,6 +691,12 @@
         </property>
         <property name="readOnly">
          <bool>false</bool>
+        </property>
+        <property name="minimum">
+         <number>-100</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
         </property>
        </widget>
        <widget class="QLabel" name="label_8">
@@ -728,11 +737,23 @@
           <height>22</height>
          </rect>
         </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
         <property name="frame">
          <bool>true</bool>
         </property>
         <property name="readOnly">
          <bool>false</bool>
+        </property>
+        <property name="minimum">
+         <number>-100</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>30</number>
         </property>
        </widget>
        <widget class="QComboBox" name="comboBox_frame_rate">

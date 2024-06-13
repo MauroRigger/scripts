@@ -17,3 +17,15 @@ class myPipeline_batch_fbx():
             pm.loadPlugin('fbxmaya')
         except:
             print("We can't load FBX plug-in :( !! ")
+
+    """
+    PlaybackOptions set to.
+    :param: Function to connect playbackOption to spinBox qWidget 
+    """
+    def play_back_options_min_time(self, _min_value):
+        pm.playbackOptions(minTime=_min_value)
+        print(f"minTime set to -> {_min_value}")
+
+    def play_back_options_max_time(self, _max_value):
+        pm.playbackOptions(maxTime=_max_value)
+        print(f"maxTime set to -> {_max_value}")

@@ -6,6 +6,7 @@ from PySide2.QtCore import QFile, Qt
 from PySide2 import QtWidgets, QtUiTools
 from shiboken2 import wrapInstance
 import maya.OpenMayaUI as omui
+import pymel.core as pm
 import myPipelineTool.myPipelineTool_constants as myPipe_const
 import myPipelineTool.myPipelineTool_batchFBX as myPipe_batch_fbx
 importlib.reload(myPipe_const)
@@ -39,6 +40,7 @@ class myPipelineToolUI(QtWidgets.QWidget):
         self.path_ui = ui_file
         self.read_ui()
 
+
     def read_ui(self):
         uifile = QFile(self.path_ui)
         uifile.open(QFile.ReadOnly)
@@ -70,6 +72,7 @@ class myPipelineTool_connect_buttons():
         Batch FBX buttons connect.
         :param: Connect functions form "batch_fbx_*" segment
         """
+        self.playback_options = myPipe_batch_fbx.myPipeline_batch_fbx()
         self.ui.pushButton_turn_on_plugin_fbx_export.clicked.connect(
             lambda: myPipe_batch_fbx.myPipeline_batch_fbx.check_fbx_plugin_on(self))
         self.ui.pushButton_browse_maya_files_to_fbx_export.clicked.connect(lambda: self.batch_fbx_get_ma_folder())
@@ -78,6 +81,9 @@ class myPipelineTool_connect_buttons():
             self.ui.listWidget_maya_files_loaded_to_fbx_export.clearSelection)
         self.ui.pushButton_save_in_to_fbx_export.clicked.connect(lambda: self.batch_fbx_save_new_maya_files())
         self.ui.checkBox_range_by_default.stateChanged.connect(self.batch_fbx_by_default)
+        self.ui.spinBox_minimum_range.valueChanged.connect(self.playback_options.play_back_options_min_time)
+        self.ui.spinBox_maximum_range.valueChanged.connect(self.playback_options.play_back_options_max_time)
+
 
     def get_namespace(self) -> str or None:
         if self.latest_rig:
@@ -179,11 +185,12 @@ class myPipelineTool_connect_buttons():
         if _state == 2:
             self.ui.spinBox_minimum_range.setEnabled(False)
             self.ui.spinBox_maximum_range.setEnabled(False)
-            self.ui.spinBox_maximum_range.setValue(0)
+            self.ui.spinBox_maximum_range.setValue(30)
             self.ui.spinBox_minimum_range.setValue(0)
         else:
             self.ui.spinBox_minimum_range.setEnabled(True)
             self.ui.spinBox_maximum_range.setEnabled(True)
+
 
 def open_window():
     """
