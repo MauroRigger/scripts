@@ -7,6 +7,7 @@ from PySide2 import QtWidgets, QtUiTools
 from shiboken2 import wrapInstance
 import maya.OpenMayaUI as omui
 import pymel.core as pm
+import maya.mel as mel
 import myPipelineTool.myPipelineTool_constants as myPipe_const
 import myPipelineTool.myPipelineTool_batchFBX as myPipe_batch_fbx
 importlib.reload(myPipe_const)
@@ -83,7 +84,8 @@ class myPipelineTool_connect_buttons():
         self.ui.checkBox_range_by_default.stateChanged.connect(self.batch_fbx_by_default)
         self.ui.spinBox_minimum_range.valueChanged.connect(self.playback_options.play_back_options_min_time)
         self.ui.spinBox_maximum_range.valueChanged.connect(self.playback_options.play_back_options_max_time)
-
+        self.ui.comboBox_frame_rate.currentIndexChanged.connect(self.batch_fbx_frame_rate_value)
+        # self.ui.checkBox_bake_while_export.stateChanged.connect(self.batch_fbx_bake_while_export)
 
     def get_namespace(self) -> str or None:
         if self.latest_rig:
@@ -191,6 +193,22 @@ class myPipelineTool_connect_buttons():
             self.ui.spinBox_minimum_range.setEnabled(True)
             self.ui.spinBox_maximum_range.setEnabled(True)
 
+    def batch_fbx_frame_rate_value(self):
+        frame_rate_str = self.ui.comboBox_frame_rate.currentText()
+        frame_rate = frame_rate_str.split()[0]
+
+        frame_rate_fps = {
+            "24": "24fps",
+            "30": "30fps",
+            "60": "60fps",
+            "120": "120fps"
+        }
+
+        if frame_rate in frame_rate_fps:
+            pm.currentUnit(time=frame_rate_fps[frame_rate])
+
+    # def batch_fbx_bake_while_export(self):
+    #
 
 def open_window():
     """
