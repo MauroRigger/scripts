@@ -80,12 +80,12 @@ class myPipelineTool_connect_buttons():
         self.ui.pushButton_select_all_to_fbx_export.clicked.connect(lambda: self.batch_fbx_select_all())
         self.ui.pushButton_clear_selection_to_fbx_export.clicked.connect(
             self.ui.listWidget_maya_files_loaded_to_fbx_export.clearSelection)
-        self.ui.pushButton_save_in_to_fbx_export.clicked.connect(lambda: self.batch_fbx_save_new_maya_files())
-        self.ui.checkBox_range_by_default.stateChanged.connect(self.batch_fbx_by_default)
+        self.ui.pushButton_save_in_to_fbx_export.clicked.connect(lambda: self.batch_fbx_save_fbx_files())
+        self.ui.checkBox_range_by_default.stateChanged.connect(self.batch_fbx_range_by_default)
         self.ui.spinBox_minimum_range.valueChanged.connect(self.playback_options.play_back_options_min_time)
         self.ui.spinBox_maximum_range.valueChanged.connect(self.playback_options.play_back_options_max_time)
         self.ui.comboBox_frame_rate.currentIndexChanged.connect(self.batch_fbx_frame_rate_value)
-        # self.ui.checkBox_bake_while_export.stateChanged.connect(self.batch_fbx_bake_while_export)
+        self.ui.pushButton_batch_to_fbx_export.clicked.connect(lambda: self.batch_fbx_batch_and_export())
 
     def get_namespace(self) -> str or None:
         if self.latest_rig:
@@ -172,7 +172,7 @@ class myPipelineTool_connect_buttons():
             item.setSelected(True)
             print(item)
 
-    def batch_fbx_save_new_maya_files(self):
+    def batch_fbx_save_fbx_files(self):
         get_fileDialog = QtWidgets.QFileDialog()
         get_fileDialog.setFileMode(QtWidgets.QFileDialog.Directory)
         get_fileDialog.setOption(QtWidgets.QFileDialog.ShowDirsOnly, True)
@@ -183,7 +183,7 @@ class myPipelineTool_connect_buttons():
         self.ui.lineEdit_path_save_in_to_fbx_export.setText(self.path_save_in)
         print(self.path_save_in)
 
-    def batch_fbx_by_default(self, _state):
+    def batch_fbx_range_by_default(self, _state):
         if _state == 2:
             self.ui.spinBox_minimum_range.setEnabled(False)
             self.ui.spinBox_maximum_range.setEnabled(False)
@@ -207,8 +207,18 @@ class myPipelineTool_connect_buttons():
         if frame_rate in frame_rate_fps:
             pm.currentUnit(time=frame_rate_fps[frame_rate])
 
-    # def batch_fbx_bake_while_export(self):
-    #
+    def batch_fbx_batch_and_export(self):
+        # myPipe_batch_fbx.myPipeline_batch_fbx.export_fbx(self,
+        #                                                  _animation_files=self.ui.listWidget_maya_files_loaded_to_fbx_export.selectedItems(),
+        #                                                  _save_in=self.path_save_in)
+        for file_path in self.files_list:
+            pm.openFile(file_path, force=True)
+            root_joint = myPipe_batch_fbx.myPipeline_batch_fbx.select_joint_root(self)
+            if root_joint:
+                myPipe_batch_fbx.myPipeline_batch_fbx.bake_animation(self, root_joint)
+                myPipe_batch_fbx.myPipeline_batch_fbx.export_files_selected_to_fbx(self, root_joint, file_path)
+        # pm.newFile(force=True)
+        QtWidgets.QMessageBox.information(self, 'Export Complete', 'FBX export completed successfully.')
 
 def open_window():
     """

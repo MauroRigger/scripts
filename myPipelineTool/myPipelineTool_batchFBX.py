@@ -1,5 +1,7 @@
 import pymel.core as pm
 import os
+from typing import List
+import maya.cmds as cmds
 import maya.mel as mel
 from PySide2.QtCore import QFile, Qt
 from PySide2 import QtWidgets, QtUiTools
@@ -9,6 +11,9 @@ class myPipeline_batch_fbx():
     """
     Functions for myPipelineTools -> Batch FBX tool.
     """
+    def __int__(self):
+        self.select_files: List[str] = ['']
+        self.path_save_in: str = ''
 
     """
     Check if FBX plugin is on.
@@ -32,18 +37,29 @@ class myPipeline_batch_fbx():
         pm.playbackOptions(maxTime=_max_value)
         print(f"maxTime set to -> {_max_value}")
 
-    def select_root_joint(self):
-        joints = pm.ls(type="joint")
-        for root in joints:
-            if not pm.listRelatives(root, parent=True):
-                return root
+    # def export_fbx(self, _animation_files, _save_in):
+    #     for file_path in _animation_files:
+    #         pm.openFile(file_path, force=True)
+    #         root_joint = self.select_joint_root()
+    #         if root_joint:
+    #             self.bake_animation(root_joint)
+    #             self.export_files_selected_to_fbx(root_joint, animations_file=_animation_files, _save_in=_save_in)
+    #     pm.newFile(force=True)
+    #     QtWidgets.QMessageBox.information(self, 'Export Complete', 'FBX export completed successfully.')
+
+    def select_joint_root(self):
+        joints = pm.ls(type='joint')
+        for joint in joints:
+            if not pm.listRelatives(joint, parent=True):
+                return joint
         return None
 
-    def bake_animations(self, _root_joint):
-        pm.select(_root_joint, hierarchy=True)
+    def bake_animation(self, root_joint):
+        # Bake the animation for the selected root joint hierarchy
+        pm.select(root_joint, hierarchy=True)
         pm.bakeResults(
             simulation=True,
-            time=(self.play_back_options_min_time(_min_value=True), self.play_back_options_max_time(_max_value=True)),
+            time=(pm.playbackOptions(q=True, min=True), pm.playbackOptions(q=True, max=True)),
             sampleBy=1,
             oversamplingRate=1,
             disableImplicitControl=True,
@@ -55,4 +71,18 @@ class myPipeline_batch_fbx():
             controlPoints=False,
             shape=False
         )
+
+    # def export_files_selected_to_fbx(self, root_joint, animations_file, _save_in):
+    #     pm.select(root_joint, hierarchy=True)
+    #     base_name = os.path.basename(animations_file)
+    #     fbx_name = os.path.splitext(base_name)[0] + '.fbx'
+    #     fbx_path = os.path.join(_save_in, fbx_name)
+    #     pm.mel.FBXExport('-f', fbx_path, '-s')
+
+    def export_files_selected_to_fbx(self, root_joint, file_path):
+        pm.select(root_joint, hierarchy=True)
+        base_name = os.path.basename(file_path)
+        fbx_name = os.path.splitext(base_name)[0] + '.fbx'
+        fbx_path = os.path.join(self.path_save_in, fbx_name)
+        pm.mel.FBXExport('-f', fbx_path, '-s')
 
