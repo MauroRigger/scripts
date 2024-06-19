@@ -1,10 +1,8 @@
 import pymel.core as pm
-import os
 from typing import List
 import maya.cmds as cmds
 import maya.mel as mel
-from PySide2.QtCore import QFile, Qt
-from PySide2 import QtWidgets, QtUiTools
+
 
 class myPipeline_batch_fbx():
 
@@ -37,52 +35,58 @@ class myPipeline_batch_fbx():
         pm.playbackOptions(maxTime=_max_value)
         print(f"maxTime set to -> {_max_value}")
 
-    # def export_fbx(self, _animation_files, _save_in):
-    #     for file_path in _animation_files:
-    #         pm.openFile(file_path, force=True)
-    #         root_joint = self.select_joint_root()
-    #         if root_joint:
-    #             self.bake_animation(root_joint)
-    #             self.export_files_selected_to_fbx(root_joint, animations_file=_animation_files, _save_in=_save_in)
-    #     pm.newFile(force=True)
-    #     QtWidgets.QMessageBox.information(self, 'Export Complete', 'FBX export completed successfully.')
+    def export_fbx(self, _animation_files, _folder_path, _save_in):
+        for file_path in _animation_files:
+            cmds.file(prompt=False)
+            file = pm.openFile(_folder_path + '/' + file_path.text(), force=True)
+            start_frame = pm.playbackOptions(q=True, minTime=True)
+            print(start_frame)
+            end_frame = pm.playbackOptions(q=True, maxTime=True)
+            print(end_frame)
+            pm.select('*root*')
+            pm.listRelatives(parent=True, type='joint')
+            bake_joint = pm.ls(sl=True)
+            print(bake_joint)
+            pm.bakeResults(
+                hierarchy="below",
+                simulation=True,
+                sampleBy=1,
+                time=(start_frame, end_frame))
+            for j in bake_joint:
+                pm.delete(j, constraints=True)
+            if file:
+                mel.eval("FBXExportBakeComplexAnimation -v true")
+                mel.eval("FBXExportBakeComplexStep -v 1")
+                mel.eval("FBXExportUseSceneName -v false")
+                mel.eval("FBXExportQuaternion -v euler")
+                mel.eval("FBXExportShapes -v true")
+                mel.eval("FBXExportSkins -v true")
 
-    def select_joint_root(self):
-        joints = pm.ls(type='joint')
-        for joint in joints:
-            if not pm.listRelatives(joint, parent=True):
-                return joint
-        return None
+                # Constraints
+                mel.eval("FBXExportConstraints -v false")
+                # Cameras
+                mel.eval("FBXExportCameras -v false")
+                # Lights
+                mel.eval("FBXExportLights -v false")
+                # Embed Media
+                mel.eval("FBXExportEmbeddedTextures -v false")
+                # Connections
+                mel.eval("FBXExportInputConnections -v false")
+                # Axis Conversion
+                mel.eval("FBXExportUpAxis y")
+            mel.eval('FBXExport -f "{0}" -s'.format(_save_in + '/' + file_path.text()))
 
-    def bake_animation(self, root_joint):
-        # Bake the animation for the selected root joint hierarchy
-        pm.select(root_joint, hierarchy=True)
+
+    def bake_animation(self):
+        start_frame = pm.playbackOptions(q=True, minTime=True)
+        end_frame = pm.playbackOptions(q=True, maxTime=True)
         pm.bakeResults(
-            simulation=True,
-            time=(pm.playbackOptions(q=True, min=True), pm.playbackOptions(q=True, max=True)),
-            sampleBy=1,
-            oversamplingRate=1,
-            disableImplicitControl=True,
-            preserveOutsideKeys=True,
-            sparseAnimCurveBake=False,
-            removeBakedAttributeFromLayer=False,
-            bakeOnOverrideLayer=False,
-            minimizeRotation=True,
-            controlPoints=False,
-            shape=False
-        )
+                       hierarchy="below",
+                       simulation=True,
+                       sampleBy=1,
+                       time=(start_frame, end_frame))
+        bake_joint = pm.listRelatives(type="joint")
+        for j in bake_joint:
+            pm.delete(j, constraints=True)
 
-    # def export_files_selected_to_fbx(self, root_joint, animations_file, _save_in):
-    #     pm.select(root_joint, hierarchy=True)
-    #     base_name = os.path.basename(animations_file)
-    #     fbx_name = os.path.splitext(base_name)[0] + '.fbx'
-    #     fbx_path = os.path.join(_save_in, fbx_name)
-    #     pm.mel.FBXExport('-f', fbx_path, '-s')
-
-    def export_files_selected_to_fbx(self, root_joint, file_path):
-        pm.select(root_joint, hierarchy=True)
-        base_name = os.path.basename(file_path)
-        fbx_name = os.path.splitext(base_name)[0] + '.fbx'
-        fbx_path = os.path.join(self.path_save_in, fbx_name)
-        pm.mel.FBXExport('-f', fbx_path, '-s')
 

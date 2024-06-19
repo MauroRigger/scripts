@@ -208,17 +208,11 @@ class myPipelineTool_connect_buttons():
             pm.currentUnit(time=frame_rate_fps[frame_rate])
 
     def batch_fbx_batch_and_export(self):
-        # myPipe_batch_fbx.myPipeline_batch_fbx.export_fbx(self,
-        #                                                  _animation_files=self.ui.listWidget_maya_files_loaded_to_fbx_export.selectedItems(),
-        #                                                  _save_in=self.path_save_in)
-        for file_path in self.files_list:
-            pm.openFile(file_path, force=True)
-            root_joint = myPipe_batch_fbx.myPipeline_batch_fbx.select_joint_root(self)
-            if root_joint:
-                myPipe_batch_fbx.myPipeline_batch_fbx.bake_animation(self, root_joint)
-                myPipe_batch_fbx.myPipeline_batch_fbx.export_files_selected_to_fbx(self, root_joint, file_path)
-        # pm.newFile(force=True)
-        QtWidgets.QMessageBox.information(self, 'Export Complete', 'FBX export completed successfully.')
+        myPipe_batch_fbx.myPipeline_batch_fbx.export_fbx(self,
+                                                         _folder_path=self.ma_folder_path,
+                                                         _animation_files=self.ui.
+                                                         listWidget_maya_files_loaded_to_fbx_export.selectedItems(),
+                                                         _save_in=self.path_save_in)
 
 def open_window():
     """
