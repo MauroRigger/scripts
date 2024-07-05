@@ -5,6 +5,7 @@ from typing import List
 from PySide2.QtCore import QFile, Qt
 from PySide2 import QtWidgets, QtUiTools
 from shiboken2 import wrapInstance
+from PySide2 import QtWidgets, QtCore
 import maya.OpenMayaUI as omui
 import pymel.core as pm
 import maya.mel as mel
@@ -59,6 +60,8 @@ class myPipelineTool_connect_buttons():
         self.files_list: List[str] = ['']
         self.latest_rig: str = ''
         self.path_save_in: str = ''
+        self.selectedFiles = []
+        self.outputFolder = ""
 
     def buttons_pushed(self):
         self.ui = open_window()
@@ -150,6 +153,7 @@ class myPipelineTool_connect_buttons():
     Batch FBX functions segment.
     :param: Functions for batch FBX tab tool. 
     """
+
     def batch_fbx_get_ma_folder(self):
         get_fileDialog = QtWidgets.QFileDialog()
         get_fileDialog.setFileMode(QtWidgets.QFileDialog.Directory)
@@ -165,6 +169,7 @@ class myPipelineTool_connect_buttons():
         self.ui.listWidget_maya_files_loaded_to_fbx_export.addItems(self.files_list)
         print(self.files_list)
         print(self.ma_folder_path)
+
 
     def batch_fbx_select_all(self):
         for select_files in range(self.ui.listWidget_maya_files_loaded_to_fbx_export.count()):
@@ -208,11 +213,10 @@ class myPipelineTool_connect_buttons():
             pm.currentUnit(time=frame_rate_fps[frame_rate])
 
     def batch_fbx_batch_and_export(self):
-        myPipe_batch_fbx.myPipeline_batch_fbx.export_fbx(self,
-                                                         _folder_path=self.ma_folder_path,
-                                                         _animation_files=self.ui.
-                                                         listWidget_maya_files_loaded_to_fbx_export.selectedItems(),
-                                                         _save_in=self.path_save_in)
+        myPipe_batch = myPipe_batch_fbx.myPipeline_batch_fbx()
+        myPipe_batch.export_fbx(_folder_path=self.ma_folder_path,
+                                _animation_files=self.ui.listWidget_maya_files_loaded_to_fbx_export.selectedItems(),
+                                _save_in=self.path_save_in)
 
 def open_window():
     """
