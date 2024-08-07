@@ -8,5 +8,7 @@ Snipped:
 import importlib
 import myPipelineTool.UI.myPipelineTool_main_ui as myPipelineTool_ui
 importlib.reload(myPipelineTool_ui)
-ui = myPipelineTool_ui.myPipelineTool_reference_updated_buttons()
-ui.reference_updated_buttons_pushed()
+ui = myPipelineTool_ui.myPipelineTool_connect_buttons()
+ui.buttons_pushed()
+
+

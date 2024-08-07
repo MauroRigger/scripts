@@ -1,7 +1,6 @@
 import pymel.core as pm
 from typing import List
 import maya.cmds as cmds
-import maya.mel as mel
 import os
 
 class myPipeline_batch_fbx():

@@ -657,7 +657,7 @@
        </widget>
        <widget class="QCheckBox" name="checkBox_range_by_default">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="geometry">
          <rect>
@@ -700,6 +700,9 @@
         </property>
        </widget>
        <widget class="QLabel" name="label_8">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -713,6 +716,9 @@
         </property>
        </widget>
        <widget class="QLabel" name="label_9">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -757,6 +763,9 @@
         </property>
        </widget>
        <widget class="QComboBox" name="comboBox_frame_rate">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>200</x>
@@ -790,6 +799,9 @@
         </item>
        </widget>
        <widget class="QLabel" name="label_10">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
